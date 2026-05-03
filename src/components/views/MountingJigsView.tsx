@@ -17,9 +17,9 @@ export function MountingJigsView() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isIdle, setIsIdle] = useState(false);
 
-  const [presetId, setPresetId] = useState(PRESETS[0].id);
-  const [widthMm, setWidthMm] = useState<string>(PRESETS[0].width.toString());
-  const [heightMm, setHeightMm] = useState<string>(PRESETS[0].height.toString());
+  const [presetId, setPresetId] = useState(PRESETS[2].id); // custom
+  const [widthMm, setWidthMm] = useState<string>(PRESETS[2].width.toString());
+  const [heightMm, setHeightMm] = useState<string>(PRESETS[2].height.toString());
 
   useEffect(() => {
     const preset = PRESETS.find(p => p.id === presetId);
@@ -112,11 +112,25 @@ export function MountingJigsView() {
             <X className="w-8 h-8" />
           </button>
 
+          {/* Blueprint Grid Background */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="gridPattern" width="40" height="40" patternUnits="userSpaceOnUse">
+                <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="1"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#gridPattern)" />
+          </svg>
+
           {/* The Gabarito Rectangle */}
           <div 
-            className="absolute top-0 left-1/2 -translate-x-1/2 bg-white"
+            className="absolute top-0 left-1/2 -translate-x-1/2 bg-white/10 border-2 border-white flex items-center justify-center backdrop-blur-sm shadow-[0_0_30px_rgba(255,255,255,0.1)]"
             style={{ width: `${wPx}px`, height: `${hPx}px` }}
-          />
+          >
+            <span className="text-white/80 font-mono text-xs whitespace-nowrap px-2 select-none">
+              {widthMm}x{heightMm} mm
+            </span>
+          </div>
 
           {/* Controls to adjust size */}
           <div className={`absolute bottom-24 left-1/2 -translate-x-1/2 flex flex-col items-center gap-6 bg-[#111]/80 backdrop-blur-xl border border-[#333] p-6 rounded-3xl transition-opacity duration-300 shadow-2xl ${isIdle ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>

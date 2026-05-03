@@ -84,8 +84,8 @@ export function CalibrationView() {
                   </p>
                 </div>
 
-                {/* Virtual Card Wrapper - overflow visible so scaling doesn't squish */}
-                <div className="relative w-full h-[150px] flex items-center justify-center pointer-events-none">
+                {/* Virtual Card Wrapper - container with fixed height */}
+                <div className="relative w-full h-64 overflow-hidden flex items-center justify-center pointer-events-none bg-[#0a0a0a] rounded-xl border border-[#222]">
                   {/* Actual Card scaled via transform */}
                   <div 
                     className="absolute bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] rounded-2xl border border-[#444] shadow-[0_0_50px_rgba(0,0,0,0.5)] flex items-center justify-center"
