@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "TrueScale - Régua Virtual e Alinhamento Físico",
+  title: "TrueScale - Régua Virtual",
   description: "SaaS focado em fornecer uma régua virtual de precisão e ferramentas de alinhamento físico, como centralizar hardware na tela.",
 };
 
