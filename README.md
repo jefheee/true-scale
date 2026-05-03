@@ -1,57 +1,60 @@
-📏 TrueScale | Metrologia Física e Alinhamento Virtual
+# **📏 TrueScale**
 
-TrueScale é um utilitário SaaS (Single Page Application) de precisão construído para metrologia física em telas virtuais. Ele soluciona o problema crônico de navegadores web que ocultam as dimensões físicas dos monitores, permitindo medições em centímetros reais e alinhamento de hardware de alta precisão direto no browser.
+**TrueScale** é um utilitário SaaS "Single Page Application" (SPA) projetado para metrologia física em telas virtuais. Ele resolve o problema comum de alinhar hardwares físicos (como lightbars, webcams e eye-trackers) no monitor e medir objetos do mundo real diretamente na tela com precisão milimétrica.
 
-Desenvolvido com foco em alta performance (SSR bypass para WebGL), matemática paramétrica e um design system High-End (monocromático, glassmorphism e 3D fluido).
+## **🚀 O Problema**
 
-🚀 O Problema e a Solução
+Navegadores modernos não expõem o tamanho físico do monitor (via EDID) por questões de segurança (anti-fingerprinting). A maioria das réguas online tenta cruzar a resolução (window.screen.width) com o devicePixelRatio, o que falha em monitores desktop de 23.8" ou 24" que utilizam 100% de escala do SO.
 
-Por questões de segurança e privacidade (anti-fingerprinting), navegadores modernos não expõem os dados do EDID do monitor (tamanho físico em polegadas). Ferramentas genéricas tentam adivinhar cruzando a resolução com o devicePixelRatio, falhando miseravelmente em setups multi-telas ou monitores de 24" operando a 100% de escala.
+**A Solução TrueScale:** Forçar uma calibração matemática baseada no usuário (via Cartão de Crédito ISO 7810 ou Diagonal Exata) para estabelecer um PPI (Pixels Per Inch) absoluto, salvando essa métrica para uso em múltiplas ferramentas de hardware.
 
-A Solução TrueScale: Forçamos uma base de cálculo absoluta calibrada pelo usuário (Cartão de Crédito ISO 7810 ou inserção exata da Diagonal). O sistema salva um Fator Constante de Normalização (PPI em float de alta precisão) e o utiliza para renderizar réguas, grades e projeções vetoriais fisicamente exatas.
+## **🏗️ Arquitetura e Stack**
 
-🎯 Público-Alvo e Casos de Uso (Nicho)
+* **Framework:** Next.js 14+ (App Router)  
+* **Styling:** Tailwind CSS (Arquitetura No-Scroll, 100vh/100vw overflow-hidden)  
+* **State Management:** Zustand (Persistência local do PPI em formato float de alta precisão)  
+* **Animações:** Framer Motion (Transições cinematográficas entre Views via \<AnimatePresence\>)  
+* **Design System:** High-End, Monocromático, Glassmorphism sutil (Foco no contraste para visibilidade do laser/réguas).
 
-Entusiastas de Hardware e Gamers: Instalação precisa de periféricos (como colar a base magnética de um BenQ ScreenBar ou Tobii Eye Tracker) usando a ferramenta Mounting Jigs como gabarito na tela.
+## **🛠️ Core Features (Views)**
 
-Sim Racers (Pilotos Virtuais): Alinhamento perfeito da inclinação de setups multi-monitor usando o FOV Aligner para calcular e projetar o Campo de Visão (Field of View) exato na tela.
+A interface é guiada por um **Navigation Dock** inferior, alternando entre quatro ferramentas principais:
 
-Designers Industriais e UI/UX: Verificação de proporções reais de interfaces e embalagens antes da impressão.
+1. **📏 Ruler View:** Réguas geradas dinamicamente via \<canvas\> (Top e Left), alternando instantaneamente entre Centímetros (cm) e Polegadas (in) baseadas no PPI calibrado.  
+2. **🎛️ Calibration View:** O motor matemático. Permite ajustar o PPI por dois métodos:  
+   * **Cartão de Crédito:** Interface drag-to-resize com trava estrita de proporção (aspect-\[85.6/53.98\]).  
+   * **Diagonal Real:** Input matemático exato (ex: tela de 23.8").  
+3. **🎯 Center Mark View (Fullscreen):** Para alinhar o centro exato da tela.  
+   * Força a Fullscreen API para anular barras de navegação laterais (ex: Vivaldi, Edge).  
+   * Renderiza um grid milimétrico SVG espaçado com base no PPI.  
+   * Miras concêntricas (crosshairs) no centro absoluto (50vw, 50vh).  
+4. **💡 Top Notch View (Hardware Mount):** Para colagem de imãs e periféricos.  
+   * Força Fullscreen.  
+   * Renderiza um gabarito branco sólido grudado no eixo Y: 0, centralizado no eixo X.  
+   * Redimensionável pelo usuário (ex: base da lightbar tem 40mm x 15mm) para servir de molde físico na colagem.
 
-Uso Diário: Usuários pesquisando "onde é o centro da minha tela" ou "régua online em centímetros" para medir objetos encostando-os no monitor.
+## **🔍 Contexto para Deep Research (AI Agents)**
 
-🛠️ Arquitetura e Stack Tecnológico
+Este projeto está em fase de expansão. Os agentes de pesquisa devem investigar as seguintes barreiras arquiteturais e oportunidades:
 
-Core: Next.js 14+ (App Router).
+### **Desafios Técnicos Atuais**
 
-Styling & UI: Tailwind CSS (Arquitetura No-Scroll, 100vh/vw overflow-hidden).
+1. **Distorção de OS Scaling:** Como o Windows Scaling (125%, 150%) ou o macOS Retina Display alteram a contagem de pixels lógicos vs. físicos, e como normalizar isso matematicamente sem depender apenas do window.devicePixelRatio.  
+2. **Limitações do EDID:** Existe alguma API experimental (WebUSB, WebHID, Screen Detailed API, Window Management API) que permita a leitura do tamanho do monitor pulando a calibração manual?  
+3. **Gerenciamento de Float em Polegadas:** Evitar problemas de arredondamento (Math.round) ao fazer conversões bidirecionais entre a escala de pixels, milímetros e polegadas fracionadas (1/16, 1/32).
 
-3D Engine: Spline Design (Renderização WebGL otimizada via next/dynamic sem SSR).
+### **Expansão de Mercado (SaaS)**
 
-State Management: Zustand (Persistência paramétrica do PPI e configurações do usuário).
+* Quais ferramentas "pro-sumer" ou de nicho (gamers de simulação, designers gráficos CAD) precisam desse tipo de calibração?  
+* Como integrar detecção de câmera para auto-calibração usando visão computacional (ex: o usuário segura um papel A4 e a webcam calibra a tela)?
 
-Motion & UX: Framer Motion (Transições de páginas, Layout IDs para o Navigation Dock, Glassmorphism).
+## **💻 Instalação e Uso**
 
-Deploy: Vercel (CI/CD ultra-rápido, otimizado para Edge Network).
+\# Clone o repositório  
+git clone \[https://github.com/your-user/true-scale.git\](https://github.com/your-user/true-scale.git)
 
-🧰 Ferramentas Inclusas (Views)
+\# Instale as dependências  
+npm install
 
-Ruler (Régua Digital): Réguas em L (Top/Left/Bottom/Right) de alta performance com Quick Calibration via Diagonal do Monitor. Alterna entre cm/in instantaneamente.
-
-Calibration Engine: Motor de ajuste fino onde um cartão virtual de proporções físicas imutáveis (aspect-[85.6/53.98]) calibra o escalonamento geral do app.
-
-Center Mark: Miras de precisão (crosshairs) sobrepondo o centro absoluto geométrico do viewport.
-
-Mounting Jigs (Gabaritos): Prancheta estilo blueprint que projeta blocos brancos sólidos no topo da tela nas dimensões milimétricas exatas para colagem de hardware.
-
-FOV Aligner: HUD Sci-Fi que calcula através de trigonometria a angulação do campo de visão baseada na distância do rosto à tela.
-
-💻 Como Rodar Localmente
-
-Clone o repositório: git clone https://github.com/your-username/true-scale.git
-
-Instale as dependências: npm install
-
-Inicie o servidor: npm run dev
-
-Acesse: http://localhost:3000
+\# Rode em desenvolvimento  
+npm run dev  
