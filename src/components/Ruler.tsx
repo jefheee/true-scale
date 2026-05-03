@@ -4,11 +4,11 @@ import { useEffect, useRef } from 'react';
 import { useCalibrationStore } from '@/store/useCalibrationStore';
 
 interface RulerProps {
-  orientation: 'horizontal' | 'vertical';
+  position: 'top' | 'bottom' | 'left' | 'right';
   size?: number;
 }
 
-export function Ruler({ orientation, size = 30 }: RulerProps) {
+export function Ruler({ position, size = 30 }: RulerProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { ppi, unit } = useCalibrationStore();
 
@@ -23,7 +23,7 @@ export function Ruler({ orientation, size = 30 }: RulerProps) {
     const dpr = window.devicePixelRatio || 1;
     
     const updateSize = () => {
-      const isHorizontal = orientation === 'horizontal';
+      const isHorizontal = position === 'top' || position === 'bottom';
       const length = isHorizontal ? window.innerWidth : window.innerHeight;
       
       canvas.width = (isHorizontal ? length : size) * dpr;
@@ -34,10 +34,10 @@ export function Ruler({ orientation, size = 30 }: RulerProps) {
       
       ctx.scale(dpr, dpr);
       
-      drawRuler(ctx, length, isHorizontal);
+      drawRuler(ctx, length, isHorizontal, position);
     };
 
-    const drawRuler = (ctx: CanvasRenderingContext2D, length: number, isHorizontal: boolean) => {
+    const drawRuler = (ctx: CanvasRenderingContext2D, length: number, isHorizontal: boolean, pos: string) => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = '#111'; // Dark background
       ctx.fillRect(0, 0, isHorizontal ? length : size, isHorizontal ? size : length);
@@ -48,47 +48,59 @@ export function Ruler({ orientation, size = 30 }: RulerProps) {
       ctx.textAlign = isHorizontal ? 'center' : 'left';
       ctx.textBaseline = isHorizontal ? 'top' : 'middle';
 
-      // Pixels per unit
-      let ppu = ppi; // Default inches
-      let subunits = 8; // 1/8 inches
+      if (pos === 'bottom') ctx.textBaseline = 'bottom';
+      if (pos === 'right') ctx.textAlign = 'right';
+
+      let ppu = ppi; 
+      let subunits = 8; 
       
       if (unit === 'cm') {
-        ppu = ppi / 2.54; // Pixels per cm
-        subunits = 10; // 1 mm
+        ppu = ppi / 2.54; 
+        subunits = 10; 
       }
 
       ctx.beginPath();
-      
       const maxUnits = Math.ceil(length / ppu);
       
       for (let i = 0; i <= maxUnits; i++) {
-        const pos = i * ppu;
+        const p = i * ppu;
         
-        // Draw main unit line
         if (isHorizontal) {
-          ctx.moveTo(pos, size - 15);
-          ctx.lineTo(pos, size);
-          if (i > 0) ctx.fillText(i.toString(), pos, 2);
+          const yStart = pos === 'top' ? size - 15 : 0;
+          const yEnd = pos === 'top' ? size : 15;
+          const textY = pos === 'top' ? 2 : size - 2;
+
+          ctx.moveTo(p, yStart);
+          ctx.lineTo(p, yEnd);
+          if (i > 0) ctx.fillText(i.toString(), p, textY);
         } else {
-          ctx.moveTo(size - 15, pos);
-          ctx.lineTo(size, pos);
-          if (i > 0) ctx.fillText(i.toString(), 2, pos);
+          const xStart = pos === 'left' ? size - 15 : 0;
+          const xEnd = pos === 'left' ? size : 15;
+          const textX = pos === 'left' ? 2 : size - 2;
+
+          ctx.moveTo(xStart, p);
+          ctx.lineTo(xEnd, p);
+          if (i > 0) ctx.fillText(i.toString(), textX, p);
         }
 
         // Draw subunits
         for (let j = 1; j < subunits; j++) {
-          const subPos = pos + (j * ppu) / subunits;
-          if (subPos > length) break;
+          const subP = p + (j * ppu) / subunits;
+          if (subP > length) break;
           
           const isHalf = j === Math.floor(subunits / 2);
           const tickSize = isHalf ? 10 : 5;
           
           if (isHorizontal) {
-            ctx.moveTo(subPos, size - tickSize);
-            ctx.lineTo(subPos, size);
+            const yStart = pos === 'top' ? size - tickSize : 0;
+            const yEnd = pos === 'top' ? size : tickSize;
+            ctx.moveTo(subP, yStart);
+            ctx.lineTo(subP, yEnd);
           } else {
-            ctx.moveTo(size - tickSize, subPos);
-            ctx.lineTo(size, subPos);
+            const xStart = pos === 'left' ? size - tickSize : 0;
+            const xEnd = pos === 'left' ? size : tickSize;
+            ctx.moveTo(xStart, subP);
+            ctx.lineTo(xEnd, subP);
           }
         }
       }
@@ -99,17 +111,20 @@ export function Ruler({ orientation, size = 30 }: RulerProps) {
     updateSize();
     window.addEventListener('resize', updateSize);
     return () => window.removeEventListener('resize', updateSize);
-  }, [ppi, unit, orientation, size]);
+  }, [ppi, unit, position, size]);
+
+  const positionClasses = {
+    top: 'top-0 left-0 w-full border-b',
+    bottom: 'bottom-0 left-0 w-full border-t',
+    left: 'top-0 left-0 h-full border-r',
+    right: 'top-0 right-0 h-full border-l',
+  };
 
   return (
     <div
-      className={`fixed top-0 left-0 z-50 ${
-        orientation === 'horizontal' ? 'w-full' : 'h-full'
-      } bg-[#0a0a0a] border-[#333] ${
-        orientation === 'horizontal' ? 'border-b' : 'border-r'
-      }`}
+      className={`fixed z-50 bg-[#0a0a0a] border-[#333] ${positionClasses[position]}`}
       style={{
-        [orientation === 'horizontal' ? 'height' : 'width']: `${size}px`,
+        [position === 'top' || position === 'bottom' ? 'height' : 'width']: `${size}px`,
       }}
     >
       <canvas ref={canvasRef} className="block" />
