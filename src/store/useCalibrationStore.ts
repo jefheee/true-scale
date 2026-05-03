@@ -13,9 +13,9 @@ interface CalibrationState {
 }
 
 // Default standard web PPI
-const DEFAULT_PPI = 96;
+const DEFAULT_PPI = 96.0;
 
-// Credit card standard width is 85.6mm. In inches: 85.6 / 25.4 = 3.37007874 inches
+// Credit card standard width is 85.6mm. In inches: 85.6 / 25.4
 const CREDIT_CARD_WIDTH_INCHES = 85.6 / 25.4;
 
 export const useCalibrationStore = create<CalibrationState>()(
