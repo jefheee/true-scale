@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+📏 TrueScale | Metrologia Física e Alinhamento Virtual
 
-## Getting Started
+TrueScale é um utilitário SaaS (Single Page Application) de precisão construído para metrologia física em telas virtuais. Ele soluciona o problema crônico de navegadores web que ocultam as dimensões físicas dos monitores, permitindo medições em centímetros reais e alinhamento de hardware de alta precisão direto no browser.
 
-First, run the development server:
+Desenvolvido com foco em alta performance (SSR bypass para WebGL), matemática paramétrica e um design system High-End (monocromático, glassmorphism e 3D fluido).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+🚀 O Problema e a Solução
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Por questões de segurança e privacidade (anti-fingerprinting), navegadores modernos não expõem os dados do EDID do monitor (tamanho físico em polegadas). Ferramentas genéricas tentam adivinhar cruzando a resolução com o devicePixelRatio, falhando miseravelmente em setups multi-telas ou monitores de 24" operando a 100% de escala.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+A Solução TrueScale: Forçamos uma base de cálculo absoluta calibrada pelo usuário (Cartão de Crédito ISO 7810 ou inserção exata da Diagonal). O sistema salva um Fator Constante de Normalização (PPI em float de alta precisão) e o utiliza para renderizar réguas, grades e projeções vetoriais fisicamente exatas.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🎯 Público-Alvo e Casos de Uso (Nicho)
 
-## Learn More
+Entusiastas de Hardware e Gamers: Instalação precisa de periféricos (como colar a base magnética de um BenQ ScreenBar ou Tobii Eye Tracker) usando a ferramenta Mounting Jigs como gabarito na tela.
 
-To learn more about Next.js, take a look at the following resources:
+Sim Racers (Pilotos Virtuais): Alinhamento perfeito da inclinação de setups multi-monitor usando o FOV Aligner para calcular e projetar o Campo de Visão (Field of View) exato na tela.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Designers Industriais e UI/UX: Verificação de proporções reais de interfaces e embalagens antes da impressão.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Uso Diário: Usuários pesquisando "onde é o centro da minha tela" ou "régua online em centímetros" para medir objetos encostando-os no monitor.
 
-## Deploy on Vercel
+🛠️ Arquitetura e Stack Tecnológico
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Core: Next.js 14+ (App Router).
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Styling & UI: Tailwind CSS (Arquitetura No-Scroll, 100vh/vw overflow-hidden).
+
+3D Engine: Spline Design (Renderização WebGL otimizada via next/dynamic sem SSR).
+
+State Management: Zustand (Persistência paramétrica do PPI e configurações do usuário).
+
+Motion & UX: Framer Motion (Transições de páginas, Layout IDs para o Navigation Dock, Glassmorphism).
+
+Deploy: Vercel (CI/CD ultra-rápido, otimizado para Edge Network).
+
+🧰 Ferramentas Inclusas (Views)
+
+Ruler (Régua Digital): Réguas em L (Top/Left/Bottom/Right) de alta performance com Quick Calibration via Diagonal do Monitor. Alterna entre cm/in instantaneamente.
+
+Calibration Engine: Motor de ajuste fino onde um cartão virtual de proporções físicas imutáveis (aspect-[85.6/53.98]) calibra o escalonamento geral do app.
+
+Center Mark: Miras de precisão (crosshairs) sobrepondo o centro absoluto geométrico do viewport.
+
+Mounting Jigs (Gabaritos): Prancheta estilo blueprint que projeta blocos brancos sólidos no topo da tela nas dimensões milimétricas exatas para colagem de hardware.
+
+FOV Aligner: HUD Sci-Fi que calcula através de trigonometria a angulação do campo de visão baseada na distância do rosto à tela.
+
+💻 Como Rodar Localmente
+
+Clone o repositório: git clone https://github.com/your-username/true-scale.git
+
+Instale as dependências: npm install
+
+Inicie o servidor: npm run dev
+
+Acesse: http://localhost:3000
